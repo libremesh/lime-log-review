@@ -13,7 +13,7 @@ start_service_daemon()
 {
 	PIDCOUNT="$(( ${PIDCOUNT} + 1))"
 	local pid_file="/var/run/remotefilteredlog.${PIDCOUNT}.pid"
-	local remotefilteredlog_ip remotefilteredlog_port remotefilteredlog_prefix remotefilteredlog_hostname
+	local remotefilteredlog_ip remotefilteredlog_port remotefilteredlog_hostname
 
 	[ -z "${remotefilteredlog_ip}" ] && return
 	[ -z "${remotefilteredlog_hostname}" ] && remotefilteredlog_hostname=$(cat /proc/sys/kernel/hostname)

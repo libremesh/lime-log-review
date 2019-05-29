@@ -1,15 +1,10 @@
 #!/bin/sh
 
-logger remotefilteredlog test
-
 OPTIND=1         # Reset in case getopts has been used previously in the shell.
-RB_PATH=/etc/lognorm_rules
+RB_FILE=/etc/lognorm_rules.rb
 
-while getopts "hpPrR" opt; do
+while getopts ":p:P:r:" opt; do
     case "$opt" in
-    h|\?)
-        HOST=$OPTARG
-        ;;
     P)
         REMOTE_PORT=$OPTARG
         ;;
@@ -19,14 +14,17 @@ while getopts "hpPrR" opt; do
     r)
         REMOTE_IP=$OPTARG
         ;;
-    R)
-        PREFIX=$OPTARG
-        ;;
     esac
+    shift $((OPTIND-1))
 done
 
-shift $((OPTIND-1))
+UNPARSED_PORT=$(( REMOTE_PORT + 1 ))
 
 [ "${1:-}" = "--" ] && shift
 
-logread -f -h $HOST -p $PID_FILE -R $PREFIX | lognormalizer -r $RB_PATH/*.rb | nc $REMOTE_IP $REMOTE_PORT
+mkfifo /tmp/logprocess
+mkfifo /tmp/logmatched
+
+cat /tmp/logmatched | lognormalizer -p -T -t event -r $RB_FILE | xargs ubus send log.event &
+cat /tmp/logprocess | lognormalizer -p -T -r $RB_FILE -e raw | tee /tmp/logmatched | nc $REMOTE_IP $REMOTE_PORT &
+logread -f -p $PID_FILE | tee /tmp/logprocess | lognormalizer -P -T -r $RB_FILE -e raw | nc $REMOTE_IP $UNPARSED_PORT
