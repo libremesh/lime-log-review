@@ -13,7 +13,7 @@ PKG_RELEASE:=2
 
 PKG_SOURCE_URL:=http://www.liblognorm.com/files/download/
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SHA256SUM:=730175b6e4e8818c31a60f614f8ba38aae4f8edbeb50d0e34236749e5d20b3a3
+PKG_HASH:=730175b6e4e8818c31a60f614f8ba38aae4f8edbeb50d0e34236749e5d20b3a3
 
 PKG_MAINTAINER:=Nicolas Pace <nico@libre.ws>
 PKG_LICENSE:=LGPL-2.1+
